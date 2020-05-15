@@ -74,7 +74,7 @@ module TrackerApi
       opts           = parse_query_and_convenience_headers path, options.dup
       auto_paginate  = opts[:params].delete(:auto_paginate) { |k| @auto_paginate }
       @last_response = request :get, opts
-      data           = @last_response.body
+      data           = @last_response.body.force_encoding('utf-8')
       raise TrackerApi::Errors::UnexpectedData, 'Array expected' unless data.is_a? Array
 
       if auto_paginate
@@ -88,7 +88,7 @@ module TrackerApi
           if block_given?
             yield(data, @last_response)
           else
-            data.concat(@last_response.body) if @last_response.body.is_a?(Array)
+            data.concat(@last_response.body.force_encoding('utf-8')) if @last_response.body.is_a?(Array)
           end
         end
       end
